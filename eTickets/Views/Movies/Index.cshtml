@@ -1,0 +1,249 @@
+﻿@model IEnumerable<Movie>
+
+@{
+    ViewData["Title"] = "Cinematic Experience - Red Edition";
+}
+
+<style>
+    /* الأساسيات والخلفية */
+    body {
+        background-color: #050505; /* أسود أعمق */
+        color: #ffffff;
+        font-family: 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .movie-wrapper {
+        perspective: 1000px;
+    }
+
+    .premium-card-dark {
+        position: relative;
+        height: 540px;
+        border-radius: 25px;
+        overflow: hidden;
+        background: #121212;
+        border: 1px solid rgba(255, 0, 0, 0.1); /* حدود حمراء خفيفة */
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .poster-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.8s ease;
+    }
+
+    .premium-card-dark:hover .poster-image {
+        transform: scale(1.1);
+    }
+
+    /* الطبقة الزجاجية السفلى */
+    .glass-data-panel {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        padding: 22px;
+        background: rgba(10, 0, 0, 0.85); /* لمحة حمراء في الخلفية */
+        backdrop-filter: blur(15px);
+        border-top: 1px solid rgba(255, 0, 0, 0.3);
+        z-index: 3;
+    }
+
+    .premium-card-dark:hover {
+        transform: translateY(-12px);
+        border-color: #ff0000;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.3);
+    }
+
+    /* أوسمة السعر والحالة باللون الأحمر */
+    .neon-price {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(10, 0, 0, 0.85);
+        color: #ff3131; /* أحمر نيون */
+        padding: 6px 14px;
+        border-radius: 12px;
+        font-weight: 800;
+        border: 1px solid #ff3131;
+        z-index: 4;
+        box-shadow: 0 0 10px rgba(255, 49, 49, 0.4);
+    }
+
+    .status-container {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 4;
+    }
+
+    .badge-status {
+        padding: 6px 12px;
+        border-radius: 10px;
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .bg-available {
+        background: #ff0000;
+        color: white;
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+    }
+
+    .bg-upcoming {
+        background: #444;
+        color: #ccc;
+        border: 1px solid #666;
+    }
+
+    .bg-ended {
+        background: #1a1a1a;
+        color: #555;
+    }
+
+    /* الأزرار الاحترافية باللون الأحمر */
+    .action-btn-hub {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+    }
+
+    .btn-details:hover {
+        background: white;
+        color: black;
+        transform: translateY(-3px);
+    }
+
+    .btn-edit:hover {
+        border-color: #ffc107;
+        color: #ffc107;
+        background: rgba(255,193,7,0.1);
+        box-shadow: 0 0 15px rgba(255,193,7,0.2);
+        transform: translateY(-3px);
+    }
+
+    .btn-delete:hover {
+        border-color: #ff0000;
+        color: #ff0000;
+        background: rgba(255,0,0,0.15);
+        box-shadow: 0 0 15px rgba(255,0,0,0.4);
+        transform: translateY(-3px);
+    }
+
+    .btn-cart:hover {
+        border-color: #ff3131;
+        color: #ff3131;
+        background: rgba(255,49,49,0.15);
+        box-shadow: 0 0 15px rgba(255,49,49,0.4);
+        transform: translateY(-3px);
+    }
+
+    /* زر الإضافة العائم الأحمر */
+    .fab-add {
+        position: fixed;
+        right: 30px;
+        bottom: 30px;
+        width: 65px;
+        height: 65px;
+        background: #ff0000;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 25px rgba(255, 0, 0, 0.4);
+        transition: 0.4s;
+        z-index: 1000;
+        border: none;
+        color: white;
+    }
+
+        .fab-add:hover {
+            transform: rotate(90deg) scale(1.1);
+            background: #cc0000;
+            color: white;
+        }
+</style>
+
+<div class="container py-5">
+    <div class="row g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col-xl-3 col-lg-4 col-md-6 movie-wrapper">
+                <div class="premium-card-dark shadow-lg">
+
+                    @* السعر باللون الأحمر *@
+                    <div class="neon-price">@item.Price.ToString("C")</div>
+
+                    @* الحالة *@
+                    <div class="status-container">
+                        @if (DateTime.Now >= item.StartDate && DateTime.Now <= item.EndDate)
+                        {
+                            <span class="badge-status bg-available">LIVE NOW</span>
+                        }
+                        else if (DateTime.Now < item.StartDate)
+                        {
+                            <span class="badge-status bg-upcoming">COMING</span>
+                        }
+                        else
+                        {
+                            <span class="badge-status bg-ended">EXPIRED</span>
+                        }
+                    </div>
+
+                    @* البوستر *@
+                    <img src="@item.ImageURL" class="poster-image" alt="@item.Name">
+
+                    @* لوحة البيانات *@
+                    <div class="glass-data-panel">
+                        <h5 class="fw-bold mb-1 text-white text-truncate">@item.Name</h5>
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span style="color: #ff3131; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;">@item.MovieCategory.ToString().ToUpper()</span>
+                            <span class="text-white-50 small" style="font-size: 0.7rem;">
+                                <i class="bi bi-clock-history me-1 text-danger"></i> @item.EndDate.ToString("dd MMM yy")
+                            </span>
+                        </div>
+
+                        <p class="small text-light opacity-75 mb-3 text-truncate" style="font-size: 0.8rem;">
+                            <i class="bi bi-geo-alt-fill text-danger me-1"></i> @(item.Cinema?.Name ?? "Main Hall")
+                        </p>
+
+                        @* الأزرار *@
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex gap-2">
+                                <a class="action-btn-hub btn-details" asp-action="Details" asp-route-id="@item.Id">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+                                <a class="action-btn-hub btn-edit" asp-action="Edit" asp-route-id="@item.Id">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <a class="action-btn-hub btn-delete" asp-action="Delete" asp-route-id="@item.Id">
+                                    <i class="bi bi-trash3-fill"></i>
+                                </a>
+                            </div>
+
+                            <a class="action-btn-hub btn-cart @(DateTime.Now > item.EndDate ? "disabled" : "")"
+                               asp-controller="Orders" asp-action="AddItemToShoppingCart" asp-route-id="@item.Id">
+                                <i class="bi bi-cart-check-fill"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@* زر الإضافة العائم *@
+<a asp-controller="Movies" asp-action="Create" class="fab-add">
+    <i class="bi bi-plus-lg fs-2"></i>
+</a>

@@ -1,4 +1,5 @@
 using eTickets.Data;
+using eTickets.Data.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace eTickets
@@ -18,6 +19,10 @@ namespace eTickets
                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"));
            });
 
+            builder.Services.AddScoped<IActorServices, ActorServices>();
+            builder.Services.AddScoped<IProducerService, ProducerService>();
+            builder.Services.AddScoped<ICinemaService, CinemaService>();
+            builder.Services.AddScoped<IMovieService, MovieService>();
 
 
 
@@ -41,7 +46,7 @@ namespace eTickets
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Movies}/{action=Index}/{id?}");
 
 
             AppDbInitializer.Seed(app);

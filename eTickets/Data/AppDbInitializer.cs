@@ -97,13 +97,8 @@ namespace eTickets.Data
                             FullName = "Tom Hanks",
                             Bio = "Beloved actor, voice of Woody in Toy Story.",
                             ProfilePictureURL = "/Images/Actors/actor-5.jpg"
-                        },
-                        new Actor()
-                        {
-                            FullName = "Matthew McConaughey",
-                            Bio = "Lead actor in Interstellar.",
-                            ProfilePictureURL = "/Images/Actors/actor-6.jpg"
                         }
+                      
                     });
                     context.SaveChanges();
                 }

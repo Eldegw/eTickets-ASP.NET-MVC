@@ -1,0 +1,81 @@
+﻿@model IEnumerable<Actor>
+
+@{
+    ViewData["Title"] = "Actors Directory";
+}
+
+<style>
+    /* خلفية تشبه نتفليكس */
+    body {
+        background-color: #141414 !important;
+        color: white !important;
+    }
+
+    .card {
+        background-color: #1f1f1f;
+        border: 1px solid #333;
+        transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+        .card:hover {
+            transform: scale(1.08);
+            border-color: #e50914; /* أحمر نتفليكس عند الهوفر */
+            z-index: 10;
+        }
+
+    .card-img-top {
+        filter: brightness(0.8);
+        transition: filter 0.3s ease;
+    }
+
+    .card:hover .card-img-top {
+        filter: brightness(1);
+    }
+
+    .btn-netflix {
+        background-color: #e50914;
+        color: white;
+        border: none;
+        transition: background 0.3s;
+    }
+
+        .btn-netflix:hover {
+            background-color: #b20710;
+            color: white;
+        }
+
+    .actor-name {
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5 border-bottom border-secondary pb-3">
+        <h1 class="display-5 fw-bold text-white">Actors <span style="color: #e50914;">Directory</span></h1>
+        <a asp-action="Create" class="btn btn-netflix btn-lg px-4">
+            <i class="bi bi-plus-circle"></i> Add New Actor
+        </a>
+    </div>
+
+    <div class="row g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                <div class="card h-100 shadow-lg">
+                    <img src="@item.ProfilePictureURL" class="card-img-top" alt="@item.FullName" style="height: 250px; object-fit: cover;">
+                    <div class="card-body p-2">
+                        <h6 class="actor-name text-truncate">@item.FullName</h6>
+
+                        <div class="d-flex justify-content-between mt-3">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="text-white"><i class="bi bi-pencil"></i></a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="text-white"><i class="bi bi-info-circle"></i></a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="text-danger"><i class="bi bi-trash"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

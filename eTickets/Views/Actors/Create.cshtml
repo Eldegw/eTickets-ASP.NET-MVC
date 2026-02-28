@@ -1,0 +1,161 @@
+﻿@model Actor
+
+@{
+    ViewData["Title"] = "Add New Actor";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+<style>
+    /* 1. خلفية سوداء مطابقة لـ Index */
+    body {
+        background-color: #121212; /* أسود سينمائي */
+        color: #ffffff;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* 2. كارت غامق بحدود رفيعة جداً */
+    .glass-card {
+        background: #1c1c1c;
+        border: 1px solid #333;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        padding: 3rem;
+    }
+
+    /* 3. العناوين باللون الأحمر والأبيض كما في الصورة */
+    .display-header {
+        font-weight: 800;
+        color: #ffffff;
+    }
+
+    .text-red-highlight {
+        color: #e50914; /* أحمر نيتفلكس المعتمد في الـ Index عندك */
+    }
+
+    /* 4. تحسين خانات الإدخال لتناسب الوضع الليلي */
+    .form-control {
+        background: #2b2b2b;
+        border: 1px solid #444;
+        color: #fff !important;
+        border-radius: 8px;
+        padding: 12px;
+    }
+
+        .form-control:focus {
+            background: #333;
+            border-color: #e50914; /* فوكس أحمر */
+            box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.2);
+            outline: none;
+        }
+
+    /* 5. زر الإضافة الأحمر المماثل لزر Add New Actor */
+    .btn-netflix {
+        background-color: #e50914;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 5px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+        .btn-netflix:hover {
+            background-color: #b20710;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    /* 6. معاينة الصورة بشكل دائري احترافي */
+    .img-preview-container {
+        border: 3px solid #e50914;
+        padding: 5px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .text-muted {
+        color: #aaa !important;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="glass-card">
+
+                <div class="mb-5">
+                    <h2 class="display-header text-center">Add New <span class="text-red-highlight">Actor</span></h2>
+                    <p class="text-muted text-center">Join the creative minds in our directory</p>
+                </div>
+
+                <form asp-controller="Producers" asp-action="SaveCreate" method="post" class="row g-4">
+                    <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+
+                    <div class="col-md-4 text-center border-end border-secondary border-opacity-25">
+                        <div class="img-preview-container mb-3 shadow-lg">
+                            <img id="PicPreview" src="https://via.placeholder.com/180?text=Upload+Photo"
+                                 class="rounded-circle"
+                                 style="width: 180px; height: 180px; object-fit: cover;" />
+                        </div>
+                        <div>
+                            <span class="badge bg-dark border border-secondary text-light px-3 py-2">
+                                <i class="bi bi-eye me-1"></i> Preview Mode
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8 ps-md-5">
+                        <div class="mb-4">
+                            <label asp-for="FullName" class="form-label fw-bold">Full Name</label>
+                            <input asp-for="FullName" class="form-control" placeholder="e.g. Christopher Nolan" />
+                            <span asp-validation-for="FullName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="ProfilePictureURL" class="form-label fw-bold">Profile Picture URL</label>
+                            <input asp-for="ProfilePictureURL" id="PicInput" class="form-control" placeholder="Paste image link here..." />
+                            <span asp-validation-for="ProfilePictureURL" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Bio" class="form-label fw-bold">Biography</label>
+                            <textarea asp-for="Bio" class="form-control" rows="4" placeholder="Brief history..."></textarea>
+                            <span asp-validation-for="Bio" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between pt-3">
+                            <a asp-action="Index" class="text-muted text-decoration-none small">
+                                <i class="bi bi-arrow-left"></i> Back to Directory
+                            </a>
+                            <button type="submit" class="btn btn-netflix">
+                                <i class="bi bi-plus-lg me-2"></i> Create Actor
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // تحديث الصورة عند الكتابة
+            $("#PicInput").on("input", function () {
+                var url = $(this).val();
+                $("#PicPreview").attr("src", url || "https://via.placeholder.com/180?text=Upload+Photo");
+            });
+
+            // في حال كان الرابط خطأ
+            $("#PicPreview").on("error", function() {
+                $(this).attr("src", "https://via.placeholder.com/180?text=Invalid+Link");
+            });
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

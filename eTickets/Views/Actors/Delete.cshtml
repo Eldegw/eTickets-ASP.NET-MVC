@@ -1,0 +1,104 @@
+﻿@model Actor
+
+@{
+    ViewData["Title"] = "Delete Actor";
+}
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .glass-card-delete {
+        background: #ffffff;
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(220, 53, 69, 0.1);
+        border-top: 5px solid #dc3545;
+    }
+
+    .info-label {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #6c757d;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .info-value {
+        font-size: 1.1rem;
+        color: #212529;
+        margin-bottom: 20px;
+    }
+
+    .btn-delete-gradient {
+        background: linear-gradient(135deg, #dc3545 0%, #a71d2a 100%);
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+        .btn-delete-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <div class="glass-card-delete p-5">
+
+                <div class="text-center mb-5">
+                    <h2 class="fw-bolder text-danger">Delete Confirmation</h2>
+                    <p class="text-muted">Are you sure you want to permanently remove this star from Actor List?</p>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-4 text-center d-flex flex-column align-items-center justify-content-center border-end border-light">
+                        <div class="shadow p-1 bg-white rounded-circle mb-3">
+                            <img src="@Model.ProfilePictureURL"
+                                 class="rounded-circle"
+                                 style="width: 180px; height: 180px; object-fit: cover;"
+                                 alt="@Model.FullName" />
+                        </div>
+                        <span class="badge rounded-pill bg-danger text-white shadow-sm px-3">To be Deleted</span>
+                    </div>
+
+                    <div class="col-md-8 ps-md-5">
+                        <div class="info-label">Full Name</div>
+                        <div class="info-value">@Model.FullName</div>
+
+                        <div class="info-label">Biography</div>
+                        <div class="info-value text-muted" style="font-size: 0.95rem; line-height: 1.6;">
+                            @Model.Bio
+                        </div>
+
+                        <hr class="my-4 border-light">
+
+                     
+                        <form asp-controller="Actors" asp-action="DeleteConfirmed" method="post">
+                         
+                            <input type="hidden" name="id" value="@Model.Id" />
+
+                            <div class="d-flex align-items-center justify-content-between mt-4">
+                                <a asp-action="Index" class="text-muted text-decoration-none small fw-bold">
+                                    <i class="bi bi-chevron-left"></i> No, Keep it
+                                </a>
+
+                                <button type="submit" class="btn btn-delete-gradient">
+                                    Yes, Delete Permanently <i class="bi bi-trash3-fill ms-2"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

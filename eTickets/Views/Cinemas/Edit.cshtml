@@ -1,0 +1,110 @@
+﻿@model eTickets.Models.Cinema
+
+@{
+    ViewData["Title"] = "Edit Cinema";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+<style>
+    body {
+        background-color: #121212;
+        color: #ffffff;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .glass-card {
+        background: #1c1c1c;
+        border: 1px solid #333;
+        border-radius: 15px;
+        padding: 3rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .text-red-highlight {
+        color: #e50914;
+    }
+
+    .form-control {
+        background: #2b2b2b;
+        border: 1px solid #444;
+        color: #fff !important;
+        border-radius: 8px;
+        padding: 12px;
+    }
+
+        .form-control:focus {
+            background: #333;
+            border-color: #e50914;
+            outline: none;
+        }
+
+    .btn-netflix-edit {
+        background-color: #e50914;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 5px;
+        font-weight: 600;
+    }
+
+        .btn-netflix-edit:hover {
+            background-color: #b20710;
+        }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="glass-card">
+                <div class="mb-5 text-center">
+                    <h2 class="fw-bold">Edit <span class="text-red-highlight">Cinema</span></h2>
+                </div>
+
+                <form asp-controller="Cinemas" asp-action="SaveEdit" method="post" class="row g-4">
+                    <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+
+                    @* هذا الحقل ضروري جداً لعملية الـ Edit *@
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="col-md-4 text-center">
+                        <img id="LogoPreview" src="@Model.Logo" class="img-fluid rounded-circle shadow mb-3" style="width: 180px; height: 180px; object-fit: cover; border: 3px solid #e50914;" />
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label fw-bold">Name</label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Logo" class="form-label fw-bold">Logo URL</label>
+                            <input asp-for="Logo" id="LogoInput" class="form-control" />
+                            <span asp-validation-for="Logo" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-bold">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+                        <div class="pt-3">
+                            <button type="submit" class="btn btn-netflix-edit">Update Cinema</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $("#LogoInput").on("input", function () {
+            $("#LogoPreview").attr("src", $(this).val());
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

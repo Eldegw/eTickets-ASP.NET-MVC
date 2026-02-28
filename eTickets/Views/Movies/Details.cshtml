@@ -1,0 +1,412 @@
+﻿@model Movie
+
+@{
+    ViewData["Title"] = Model?.Name ?? "Movie Details";
+}
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:wght@300;400;700&display=swap');
+
+    :root {
+        --red: #e60000;
+        --red-dim: #990000;
+        --red-glow: rgba(230, 0, 0, 0.15);
+        --bg: #080808;
+        --surface: #111111;
+        --border: #1e1e1e;
+        --text: #d4d4d4;
+        --text-muted: #5a5a5a;
+    }
+
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Lato', sans-serif;
+    }
+
+    /* ──── Hero Banner ──── */
+    .hero-banner {
+        position: relative;
+        width: 100%;
+        height: 70vh;
+        min-height: 420px;
+        background-size: cover;
+        background-position: center 20%;
+        overflow: hidden;
+    }
+
+        .hero-banner::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient( to bottom, rgba(8,8,8,0.25) 0%, rgba(8,8,8,0.55) 40%, rgba(8,8,8,0.98) 100% );
+        }
+
+    /* ──── Main Card ──── */
+    .movie-wrapper {
+        max-width: 1000px;
+        margin: -220px auto 60px;
+        padding: 0 20px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .movie-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(230,0,0,0.08);
+    }
+
+    /* ──── Poster + Details Row ──── */
+    .card-body {
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        gap: 0;
+    }
+
+    @@media (max-width: 768px) {
+        .card-body {
+            grid-template-columns: 1fr;
+        }
+
+        .poster-col {
+            display: none;
+        }
+    }
+
+    .poster-col {
+        position: relative;
+        min-height: 360px;
+    }
+
+        .poster-col img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .poster-col::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60px;
+            height: 100%;
+            background: linear-gradient(to right, transparent, var(--surface));
+        }
+
+    .details-col {
+        padding: 36px 36px 32px;
+    }
+
+    /* ──── Title & Status ──── */
+    .movie-header-flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .movie-title {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: clamp(2.4rem, 5vw, 4rem);
+        color: #fff;
+        letter-spacing: 0.04em;
+        line-height: 1;
+        margin-bottom: 4px;
+    }
+
+    .status-badge {
+        padding: 5px 15px;
+        border-radius: 5px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .bg-available {
+        background: #28a745;
+        color: white;
+        box-shadow: 0 0 10px rgba(40, 167, 69, 0.4);
+    }
+
+    .bg-expired {
+        background: var(--red);
+        color: white;
+        box-shadow: 0 0 10px rgba(230, 0, 0, 0.4);
+    }
+
+    .bg-upcoming {
+        background: #ffc107;
+        color: #000;
+        box-shadow: 0 0 10px rgba(255, 193, 7, 0.4);
+    }
+
+    .title-accent {
+        display: inline-block;
+        width: 50px;
+        height: 3px;
+        background: var(--red);
+        border-radius: 2px;
+        margin-bottom: 18px;
+    }
+
+    /* ──── Description ──── */
+    .movie-desc {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: var(--text-muted);
+        margin-bottom: 28px;
+        font-weight: 300;
+    }
+
+    /* ──── Meta Grid ──── */
+    .meta-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+        margin-bottom: 28px;
+    }
+
+    .meta-item {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 16px;
+        transition: border-color 0.2s;
+    }
+
+        .meta-item:hover {
+            border-color: rgba(230,0,0,0.35);
+        }
+
+    .meta-label {
+        font-size: 0.65rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--red);
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+    .meta-value {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #e0e0e0;
+    }
+
+    /* ──── Cast ──── */
+    .cast-title {
+        font-size: 0.7rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--red);
+        font-weight: 700;
+        margin-bottom: 14px;
+    }
+
+    .cast-strip {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .actor-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--border);
+        border-radius: 50px;
+        padding: 6px 14px 6px 6px;
+        transition: border-color 0.2s, background 0.2s;
+    }
+
+        .actor-item:hover {
+            border-color: var(--red-dim);
+            background: var(--red-glow);
+        }
+
+        .actor-item img {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid var(--red-dim);
+        }
+
+    .actor-name {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #ccc;
+        white-space: nowrap;
+    }
+
+    /* ──── Divider ──── */
+    .card-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 0 36px 24px;
+    }
+
+    /* ──── Actions ──── */
+    .actions {
+        display: flex;
+        gap: 12px;
+        padding: 0 36px 32px;
+        flex-wrap: wrap;
+    }
+
+    .btn-back {
+        background: transparent;
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        border-radius: 50px;
+        padding: 11px 28px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+        .btn-back:hover {
+            color: #fff;
+            border-color: #444;
+            background: rgba(255,255,255,0.05);
+        }
+
+    .btn-cart {
+        background: var(--red);
+        color: #fff;
+        border: none;
+        border-radius: 50px;
+        padding: 11px 32px;
+        font-size: 0.88rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-decoration: none;
+        text-transform: uppercase;
+        transition: 0.25s;
+        box-shadow: 0 4px 20px rgba(230,0,0,0.3);
+    }
+
+        .btn-cart:hover {
+            background: #ff1a1a;
+            box-shadow: 0 6px 30px rgba(230,0,0,0.55);
+            transform: translateY(-1px);
+            color: #fff;
+        }
+
+        .btn-cart i {
+            margin-right: 8px;
+        }
+</style>
+
+<div class="hero-banner" style="background-image: url('@(Model?.ImageURL ?? "")')"></div>
+
+<div class="movie-wrapper">
+    <div class="movie-card">
+
+        <div class="card-body">
+            <div class="poster-col">
+                <img src="@(Model?.ImageURL ?? "")" alt="@(Model?.Name ?? "Movie Poster")" />
+            </div>
+
+            <div class="details-col">
+                <div class="movie-header-flex">
+                    <div>
+                        <h1 class="movie-title">@(Model?.Name ?? "N/A")</h1>
+                        <div class="title-accent"></div>
+                    </div>
+
+                    @* حالة عرض الفيلم *@
+                    <div class="mt-2">
+                        @if (DateTime.Now >= Model.StartDate && DateTime.Now <= Model.EndDate)
+                        {
+                            <span class="status-badge bg-available">Available</span>
+                        }
+                        else if (DateTime.Now < Model.StartDate)
+                        {
+                            <span class="status-badge bg-upcoming">Upcoming</span>
+                        }
+                        else
+                        {
+                            <span class="status-badge bg-expired">Expired</span>
+                        }
+                    </div>
+                </div>
+
+                <p class="movie-desc">@(Model?.Description ?? "No description available.")</p>
+
+                <div class="meta-grid">
+                    <div class="meta-item">
+                        <div class="meta-label">Price</div>
+                        <div class="meta-value">@(Model?.Price.ToString("c") ?? "0.00")</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Category</div>
+                        <div class="meta-value">@(Model?.MovieCategory.ToString() ?? "N/A")</div>
+                    </div>
+
+                    @* حقول التواريخ المدمجة *@
+                    <div class="meta-item">
+                        <div class="meta-label">Start Date</div>
+                        <div class="meta-value">@(Model?.StartDate.ToString("dd MMM yy") ?? "N/A")</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">End Date</div>
+                        <div class="meta-value">@(Model?.EndDate.ToString("dd MMM yy") ?? "N/A")</div>
+                    </div>
+
+                    <div class="meta-item">
+                        <div class="meta-label">Cinema</div>
+                        <div class="meta-value">@(Model?.Cinema?.Name ?? "Unknown Cinema")</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Producer</div>
+                        <div class="meta-value">@(Model?.Producer?.FullName ?? "Unknown Producer")</div>
+                    </div>
+                </div>
+
+                <div class="cast-title">Cast</div>
+                <div class="cast-strip">
+                    @if (Model?.Actors_Movies != null && Model.Actors_Movies.Any())
+                    {
+                        @foreach (var actor in Model.Actors_Movies)
+                        {
+                            <div class="actor-item">
+                                <img src="@(actor.Actor?.ProfilePictureURL ?? "")" alt="@(actor.Actor?.FullName ?? "Actor")" />
+                                <span class="actor-name">@(actor.Actor?.FullName ?? "Unknown")</span>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <span class="text-muted small">No cast information available.</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="card-divider"></div>
+
+        <div class="actions">
+            <a asp-action="Index" class="btn-back">← Back</a>
+
+            @* زر السلة يظهر فقط إذا لم تنتهِ مدة العرض *@
+            @if (DateTime.Now <= Model.EndDate)
+            {
+                <a class="btn-cart" asp-controller="Orders" asp-action="AddItem" asp-route-id="@Model?.Id">
+                    <i class="bi bi-cart-plus"></i> Add to Cart
+                </a>
+            }
+        </div>
+
+    </div>
+</div>

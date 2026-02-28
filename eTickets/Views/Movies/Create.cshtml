@@ -1,0 +1,238 @@
+﻿@using eTickets.Data.Enums
+@model MovieViewModel
+
+@{
+    ViewData["Title"] = "Create a New Movie";
+}
+
+<style>
+    :root {
+        --red: #e60000;
+        --bg: #080808;
+        --surface: #111111;
+        --border: #333;
+        --text: #d4d4d4;
+    }
+
+    body {
+        background: var(--bg);
+        color: var(--text);
+    }
+
+    .create-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 40px;
+        margin-top: 50px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .image-preview-container {
+        width: 100%;
+        height: 250px;
+        border: 2px dashed #444;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        margin-bottom: 20px;
+        background: #000;
+    }
+
+        .image-preview-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: none;
+        }
+
+    .preview-placeholder {
+        color: #555;
+        font-size: 0.9rem;
+        text-align: center;
+        padding: 10px;
+    }
+
+    .form-control, .form-select {
+        background: #1a1a1a;
+        border: 1px solid #444;
+        color: white;
+        border-radius: 8px;
+    }
+
+        .form-control:focus, .form-select:focus {
+            background: #1a1a1a;
+            border-color: var(--red);
+            color: white;
+            box-shadow: 0 0 5px rgba(230,0,0,0.5);
+        }
+
+    .btn-submit {
+        background: var(--red);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 50px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+        .btn-submit:hover {
+            background: #ff1a1a;
+            transform: scale(1.05);
+        }
+
+    label {
+        color: #888;
+        margin-bottom: 5px;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-11">
+            <div class="create-card">
+                <h2 class="text-white mb-4">Create New Movie</h2>
+
+                <form asp-controller="Movies" asp-action="SaveCreate" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="row">
+                        @* Left Side: Image Preview *@
+                        <div class="col-md-4">
+                            <label>Image Preview</label>
+                            <div class="image-preview-container">
+                                <span class="preview-placeholder">No Image Provided</span>
+                                <img id="ImagePreview" src="" alt="Movie Poster" />
+                            </div>
+                        </div>
+
+                        @* Right Side: Form Fields *@
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Name"></label>
+                                    <input asp-for="Name" class="form-control" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Price"></label>
+                                    <input asp-for="Price" type="number" step="0.01" class="form-control" />
+                                    <span asp-validation-for="Price" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="ImageURL"></label>
+                                <input asp-for="ImageURL" id="ImageURLInput" class="form-control" placeholder="Paste direct image link here (jpg, png, webp)..." />
+                                <span asp-validation-for="ImageURL" class="text-danger"></span>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label asp-for="StartDate"></label>
+                                    <input asp-for="StartDate" type="date" class="form-control" />
+                                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label asp-for="EndDate"></label>
+                                    <input asp-for="EndDate" type="date" class="form-control" />
+                                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label asp-for="MovieCategory"></label>
+                                    <select asp-for="MovieCategory" class="form-select" asp-items="Html.GetEnumSelectList<MovieCategory>()">
+                                        <option value="">-- Select Category --</option>
+                                    </select>
+                                    <span asp-validation-for="MovieCategory" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="CinemaId"></label>
+                                    <select asp-for="CinemaId" class="form-select" asp-items="ViewBag.Cinemas">
+                                        <option value="">-- Select Cinema --</option>
+                                    </select>
+                                    <span asp-validation-for="CinemaId" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="ProducerId"></label>
+                                    <select asp-for="ProducerId" class="form-select" asp-items="ViewBag.Producers">
+                                        <option value="">-- Select Producer --</option>
+                                    </select>
+                                    <span asp-validation-for="ProducerId" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="ActorsId"></label>
+                                <select asp-for="ActorsId" class="form-select" asp-items="ViewBag.Actors" multiple></select>
+                                <span asp-validation-for="ActorsId" class="text-danger"></span>
+                                <small class="text-muted">Hold Ctrl/Cmd to select multiple</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Description"></label>
+                                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+
+                            <div class="d-flex gap-3 mt-4">
+                                <a asp-action="Index" class="btn btn-outline-secondary px-4">Cancel</a>
+                                <button type="submit" class="btn-submit">Create Movie</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            const $urlInput = $("#ImageURLInput");
+            const $previewImg = $("#ImagePreview");
+            const $placeholder = $(".preview-placeholder");
+
+            function updatePreview() {
+                const url = $urlInput.val().trim();
+
+                if (url !== "") {
+                    // محاولة تحميل الصورة
+                    $previewImg.attr("src", url);
+
+                    $previewImg.on('load', function() {
+                        $(this).show();
+                        $placeholder.hide();
+                    });
+
+                    $previewImg.on('error', function() {
+                        $(this).hide();
+                        $placeholder.text("Image cannot be loaded from this link").show();
+                    });
+                } else {
+                    $previewImg.hide();
+                    $placeholder.text("No Image Provided").show();
+                }
+            }
+
+            // تحديث المعاينة عند الإدخال
+            $urlInput.on("input change", updatePreview);
+
+            // تشغيل المعاينة عند تحميل الصفحة إذا كان هناك قيمة موجودة مسبقاً
+            if ($urlInput.val()) {
+                updatePreview();
+            }
+        });
+    </script>
+}
