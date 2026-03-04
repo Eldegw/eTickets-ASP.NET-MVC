@@ -1,0 +1,26 @@
+﻿@model int
+
+@if (Model > 0)
+{
+    <li class="nav-item">
+        <a class="nav-link position-relative" asp-controller="Orders" asp-action="ShoppingCart">
+            @* أيقونة السلة باللون الأبيض *@
+            <i class="bi bi-cart4 fs-4 text-white" style="filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));"></i>
+
+            @* دائرة الأرقام باللون الأصفر والنص أسود لوضوح أفضل *@
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill"
+                  style="background-color: #FFD700; color: #000; box-shadow: 0 0 10px rgba(255, 215, 0, 0.6); font-weight: bold; font-size: 0.7rem;">
+                @Model
+            </span>
+        </a>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link" asp-controller="Orders" asp-action="ShoppingCart">
+          
+            <i class="bi bi-cart4 fs-4 text-white"></i>
+        </a>
+    </li>
+}
