@@ -1,7 +1,9 @@
 ﻿using eTickets.Data.Cart;
 using eTickets.Data.Services;
 using eTickets.Data.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace eTickets.Controllers
@@ -57,18 +59,23 @@ namespace eTickets.Controllers
         }
 
 
+
         public async Task<IActionResult> CompleteOrder()
         {
-            var item = _shoppingCart.GetShoppingCartItems();
-            string userId = "";
-            string userEmailAddress = "";
+            var items = _shoppingCart.GetShoppingCartItems();
 
-            await _orderService.StoreOrderAsync(item, userId, userEmailAddress);
-            await _shoppingCart.ClearShoppingCartAsync();
-            return View("CompleteOrder", item);
+            // جلب بيانات المستخدم الحالي المسجل دخوله
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
+            string userEmailAddress = User.FindFirstValue(ClaimTypes.Email) ?? "";
 
+            if (items.Count > 0)
+            {
+                await _orderService.StoreOrderAsync(items, userId, userEmailAddress);
+                await _shoppingCart.ClearShoppingCartAsync();
+            }
+
+            return View("CompleteOrder");
         }
-
         public async Task<IActionResult> Index()
         {
             string userid = "";
