@@ -1,7 +1,9 @@
 ﻿using eTickets.Data;
 using eTickets.Data.Services;
+using eTickets.Data.Static;
 using eTickets.Data.ViewModels;
 using eTickets.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +11,8 @@ using System.Threading.Tasks;
 
 namespace eTickets.Controllers
 {
+    [Authorize(Roles = UserRole.Admin)]
+
     public class MoviesController : Controller
     {
       
@@ -19,6 +23,8 @@ namespace eTickets.Controllers
             _service = service;
         }
 
+        [AllowAnonymous]
+
         public async Task<IActionResult> Index()
         {
             var allMovies = await _service.GetAllAsync(n=>n.Cinema);
@@ -27,6 +33,7 @@ namespace eTickets.Controllers
             return View(orderedMovies);
         }
 
+        [AllowAnonymous]
 
         public async Task<IActionResult> Details(int id )
         {
@@ -139,16 +146,16 @@ namespace eTickets.Controllers
 
         public async Task<IActionResult> Filter(string searchString)
         {
-            // جلب الأفلام مع البيانات المرتبطة
+         
             var allMovies = await _service.GetAllAsync(n => n.Cinema);
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                // تم تحديث السطر التالي ليشمل البحث في الفئة (Category) أيضاً
+            
                 var filteredResult = allMovies.Where(n =>
                     n.Name.Contains(searchString, StringComparison.CurrentCultureIgnoreCase) ||
                     (n.Description != null && n.Description.Contains(searchString, StringComparison.CurrentCultureIgnoreCase)) ||
-                    n.MovieCategory.ToString().Contains(searchString, StringComparison.CurrentCultureIgnoreCase) // سطر البحث في الفئة
+                    n.MovieCategory.ToString().Contains(searchString, StringComparison.CurrentCultureIgnoreCase)
                 ).ToList();
 
                 return View("Index", filteredResult);

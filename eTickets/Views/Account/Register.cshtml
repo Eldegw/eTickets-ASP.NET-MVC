@@ -1,0 +1,200 @@
+﻿@using eTickets.Data.ViewModels
+@model RegisterVM
+
+@{
+    ViewData["Title"] = "Create a new account";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+<div class="login-page">
+    <div class="login-card">
+        <div class="card-header-custom">
+            <div class="logo-circle">
+                <i class="bi bi-person-plus-fill"></i>
+            </div>
+            <h2>Join <span class="highlight">Us</span></h2>
+            <p>Create your account for a premium experience</p>
+        </div>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="custom-alert">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span>@TempData["Error"]</span>
+            </div>
+        }
+
+        <form asp-action="SaveRegister" method="post">
+            <div asp-validation-summary="ModelOnly" class="error-msg"></div>
+
+            <div class="input-wrapper">
+                <label asp-for="FullName"></label>
+                <div class="input-field">
+                    <i class="bi bi-person"></i>
+                    <input asp-for="FullName" placeholder="Your Full Name" />
+                </div>
+                <span asp-validation-for="FullName" class="error-msg"></span>
+            </div>
+
+            <div class="input-wrapper">
+                <label asp-for="EmailAddress"></label>
+                <div class="input-field">
+                    <i class="bi bi-envelope"></i>
+                    <input asp-for="EmailAddress" placeholder="email@example.com" />
+                </div>
+                <span asp-validation-for="EmailAddress" class="error-msg"></span>
+            </div>
+
+            <div class="input-wrapper">
+                <label asp-for="Password"></label>
+                <div class="input-field">
+                    <i class="bi bi-lock"></i>
+                    <input asp-for="Password" type="password" placeholder="••••••••" />
+                </div>
+                <span asp-validation-for="Password" class="error-msg"></span>
+            </div>
+
+            <div class="input-wrapper">
+                <label asp-for="ConfirmPassword"></label>
+                <div class="input-field">
+                    <i class="bi bi-shield-check"></i>
+                    <input asp-for="ConfirmPassword" type="password" placeholder="Repeat password" />
+                </div>
+                <span asp-validation-for="ConfirmPassword" class="error-msg"></span>
+            </div>
+
+            <button type="submit" class="btn-primary-custom">
+                <span>REGISTER NOW</span>
+                <i class="bi bi-arrow-right-short"></i>
+            </button>
+        </form>
+
+        <div class="card-footer-custom">
+            <p>Already have an account? <a asp-action="Login">Sign In</a></p>
+        </div>
+    </div>
+</div>
+
+<style>
+  
+    :root {
+        --primary-red: #e63946;
+        --card-bg: #141417;
+    }
+
+    .login-page {
+        background: #0a0a0b;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Inter';
+        padding: 20px;
+    }
+
+    .login-card {
+        background: var(--card-bg);
+        width: 100%;
+        max-width: 480px;
+        padding: 40px;
+        border-radius: 24px;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .logo-circle {
+        width: 60px;
+        height: 60px;
+        background: rgba(230,57,70,0.1);
+        color: var(--primary-red);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        margin: 0 auto 15px;
+    }
+
+    h2 {
+        color: white;
+        text-align: center;
+    }
+
+    .highlight {
+        color: var(--primary-red);
+    }
+
+    p {
+        color: #888;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+
+    label {
+        color: white;
+        font-size: 0.8rem;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .input-field {
+        background: #1d1d21;
+        border: 1px solid #2d2d32;
+        border-radius: 12px;
+        padding: 5px 15px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+
+        .input-field input {
+            background: transparent;
+            border: none;
+            color: white;
+            width: 100%;
+            padding: 10px;
+            outline: none;
+        }
+
+        .input-field i {
+            color: #666;
+        }
+
+    .btn-primary-custom {
+        background: var(--primary-red);
+        color: white;
+        width: 100%;
+        padding: 15px;
+        border-radius: 12px;
+        border: none;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+
+    .custom-alert {
+        background: rgba(230,57,70,0.1);
+        color: #ff8a93;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        font-size: 0.8rem;
+    }
+
+    .error-msg {
+        color: var(--primary-red);
+        font-size: 0.7rem;
+    }
+
+    .card-footer-custom {
+        margin-top: 25px;
+        text-align: center;
+        border-top: 1px solid #2d2d32;
+        padding-top: 15px;
+    }
+
+        .card-footer-custom a {
+            color: var(--primary-red);
+            text-decoration: none;
+        }
+</style>

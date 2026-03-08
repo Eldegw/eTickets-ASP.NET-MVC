@@ -1,0 +1,55 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+<ul class="navbar-nav align-items-center gap-2">
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <li class="nav-item">
+            <a class="nav-link text-white px-3" asp-controller="Account" asp-action="Login">
+                <i class="bi bi-box-arrow-in-right me-1"></i> Login
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link btn btn-outline-danger rounded-pill px-4 text-white" asp-controller="Account" asp-action="Register">
+                Register
+            </a>
+        </li>
+    }
+    else
+    {
+        @await Component.InvokeAsync("ShoppingCartSummary")
+
+        <li class="nav-item dropdown ms-lg-3">
+            <a class="nav-link user-dropdown dropdown-toggle text-white" href="#" id="userDrop" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle fs-5 me-1"></i>
+                <span>Hello @UserManager.GetUserName(User)</span>
+            </a>
+
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-danger">
+                <li>
+                    <a class="dropdown-item" asp-controller="Orders" asp-action="Index">
+                        <i class="bi bi-list-check me-2"></i>My Orders
+                    </a>
+                </li>
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <li>
+                        <a class="dropdown-item" asp-controller="Account" asp-action="Users">
+                            <i class="bi bi-people me-2"></i>Users
+                        </a>
+                    </li>
+                }
+
+                <li><hr class="dropdown-divider bg-secondary"></li>
+                <li>
+                    <form asp-controller="Account" asp-action="Logout" method="post">
+                        <button class="dropdown-item text-danger w-100 border-0 bg-transparent text-start">
+                            <i class="bi bi-power me-2"></i>Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+    }
+</ul>

@@ -5,11 +5,17 @@ using eTickets.Data.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
+using eTickets.Data.Static;
 
 namespace eTickets.Data
 {
     public class AppDbInitializer
     {
+
+
+
         public static void Seed(IApplicationBuilder applicationBuilder)
         {
             using (var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
@@ -98,7 +104,7 @@ namespace eTickets.Data
                             Bio = "Beloved actor, voice of Woody in Toy Story.",
                             ProfilePictureURL = "/Images/Actors/actor-5.jpg"
                         }
-                      
+
                     });
                     context.SaveChanges();
                 }
@@ -177,7 +183,7 @@ namespace eTickets.Data
                             ProducerId = 2,
                             MovieCategory = MovieCategory.Drama
                         },
-                       
+
                         new Movie()
                         {
                             Name = "The Conjuring",
@@ -233,11 +239,65 @@ namespace eTickets.Data
                         new Actor_Movie() { ActorId = 4, MovieId = 4 },
                         new Actor_Movie() { ActorId = 2, MovieId = 5 },
                         new Actor_Movie() { ActorId = 5, MovieId = 5 },
-                       
+
                     });
                     context.SaveChanges();
                 }
             }
+
+        }
+
+
+        public static async Task SeedUsersAndRolesAsync(IApplicationBuilder applicationBuilder)
+        {
+            using (var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
+            {
+              
+                var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+                if (!await roleManager.RoleExistsAsync(UserRole.Admin))
+                    await roleManager.CreateAsync(new IdentityRole(UserRole.Admin));
+
+                if (!await roleManager.RoleExistsAsync(UserRole.User))
+                    await roleManager.CreateAsync(new IdentityRole(UserRole.User));
+
+              
+                var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+            
+                string adminUserEmail = "admin@etickets.com";
+                var adminUser = await userManager.FindByEmailAsync(adminUserEmail);
+                if (adminUser == null)
+                {
+                    var newAdminUser = new ApplicationUser()
+                    {
+                        FullName = "Admin User",
+                        UserName = "admin-user",
+                        Email = adminUserEmail,
+                        EmailConfirmed = true
+                    };
+                    await userManager.CreateAsync(newAdminUser, "Coding@1234");
+                    await userManager.AddToRoleAsync(newAdminUser,UserRole.Admin);
+                }
+
+            
+                string appUserEmail = "user@etickets.com";
+                var appUser = await userManager.FindByEmailAsync(appUserEmail);
+                if (appUser == null)
+                {
+                    var newAppUser = new ApplicationUser()
+                    {
+                        FullName = "Application User",
+                        UserName = "app-user", 
+                        Email = appUserEmail,
+                        EmailConfirmed = true
+                    };
+                    await userManager.CreateAsync(newAppUser, "Coding@1234");
+                    await userManager.AddToRoleAsync(newAppUser,UserRole.User);
+                }
+            }
         }
     }
+
 }
+    

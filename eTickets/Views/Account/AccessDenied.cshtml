@@ -1,0 +1,141 @@
+﻿@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;900&display=swap" rel="stylesheet">
+
+<div class="access-denied-container">
+    <div class="error-box">
+        <div class="glitch-wrapper">
+            <div class="glitch" data-text="403">403</div>
+        </div>
+
+        <div class="icon-shield">
+            <i class="bi bi-shield-lock-fill"></i>
+        </div>
+
+        <h1 class="main-title">ACCESS <span class="red-glow">DENIED</span></h1>
+
+        <div class="divider"></div>
+
+        <p class="message">
+            Sorry, but you do not have the necessary <span class="highlight">clearance</span> to enter this sector of eTICKETS.
+        </p>
+
+        <div class="action-zone">
+            <a asp-controller="Movies" asp-action="Index" class="btn-back">
+                <i class="bi bi-arrow-left"></i> Return to Safety
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .access-denied-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle at center, #1a0000 0%, #050505 100%);
+        font-family: 'Inter', sans-serif;
+    }
+
+    .error-box {
+        text-align: center;
+        max-width: 600px;
+        padding: 40px;
+        position: relative;
+    }
+
+    /* تأثير الـ Glitch للرقم 403 */
+    .glitch {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 100px;
+        font-weight: 900;
+        color: white;
+        position: relative;
+        display: inline-block;
+        text-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+    }
+
+    .icon-shield {
+        font-size: 80px;
+        color: #ff0000;
+        margin: -20px 0 20px;
+        filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.6));
+        animation: pulse 2s infinite;
+    }
+
+    .main-title {
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 700;
+        letter-spacing: 5px;
+        margin-bottom: 20px;
+    }
+
+    .red-glow {
+        color: #ff0000;
+        text-shadow: 0 0 10px #ff0000;
+    }
+
+    .divider {
+        height: 2px;
+        width: 100px;
+        background: #ff0000;
+        margin: 20px auto;
+        box-shadow: 0 0 10px #ff0000;
+    }
+
+    .message {
+        color: #888;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 40px;
+    }
+
+    .highlight {
+        color: white;
+        font-weight: 600;
+        border-bottom: 1px solid #ff0000;
+    }
+
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: transparent;
+        color: white;
+        border: 2px solid #ff0000;
+        padding: 12px 30px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        transition: 0.4s;
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+    }
+
+        .btn-back:hover {
+            background: #ff0000;
+            color: white;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+            transform: translateY(-5px);
+        }
+
+    @@keyframes pulse {
+        0% {
+            transform: scale(1);
+            opacity: 0.8;
+        }
+
+        50% {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 0.8;
+        }
+    }
+</style>

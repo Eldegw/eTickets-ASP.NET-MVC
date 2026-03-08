@@ -5,12 +5,13 @@ using eTickets.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace eTickets
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -86,6 +87,7 @@ namespace eTickets
 
 
             AppDbInitializer.Seed(app);
+           await AppDbInitializer.SeedUsersAndRolesAsync(app);
 
             app.Run();
         }

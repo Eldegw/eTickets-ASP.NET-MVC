@@ -1,7 +1,7 @@
 ﻿@model List<Order>
 
 @{
-    ViewData["Title"] = "My Orders";
+    ViewData["Title"] = "Order History";
 }
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -10,6 +10,7 @@
     body {
         background-color: #080808;
         color: white;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     .orders-wrapper {
@@ -21,116 +22,151 @@
         backdrop-filter: blur(15px);
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 25px;
-        padding: 20px;
+        padding: 30px;
         box-shadow: 0 25px 50px rgba(0,0,0,0.5);
     }
 
     .custom-table {
         color: #fff;
         vertical-align: middle;
+        margin-bottom: 0;
     }
 
         .custom-table thead th {
-            color: #e50914; /* أحمر البراند */
+            color: #e50914;
             border: none;
             text-transform: uppercase;
             font-size: 0.75rem;
             letter-spacing: 2px;
             padding: 20px;
+            background: transparent;
         }
 
         .custom-table tbody td {
             border-top: 1px solid rgba(255, 255, 255, 0.05);
             padding: 20px;
+            background: transparent;
         }
 
     .movie-item {
         background: rgba(229, 9, 20, 0.05);
         border: 1px solid rgba(229, 9, 20, 0.2);
         border-radius: 8px;
-        padding: 5px 12px;
-        margin-bottom: 5px;
-        display: block;
-        width: fit-content;
+        padding: 6px 14px;
+        margin-bottom: 6px;
+        display: inline-block;
+        margin-right: 5px;
         font-size: 0.85rem;
+        transition: 0.3s;
     }
 
+        .movie-item:hover {
+            background: rgba(229, 9, 20, 0.15);
+        }
+
     .price-tag {
-        color: #28a745;
+        color: #2ecc71;
         font-weight: 700;
+        font-size: 1.1rem;
     }
 
     .status-badge {
-        background: rgba(40, 167, 69, 0.1);
-        color: #28a745;
-        border: 1px solid rgba(40, 167, 69, 0.2);
-        padding: 6px 15px;
+        background: rgba(46, 204, 113, 0.1);
+        color: #2ecc71;
+        border: 1px solid rgba(46, 204, 113, 0.3);
+        padding: 6px 16px;
         border-radius: 50px;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         text-transform: uppercase;
-        font-weight: 700;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 100px 0;
     }
 </style>
 
 <div class="container orders-wrapper">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-end mb-5">
         <div>
-            <h2 class="fw-black m-0">ORDER HISTORY</h2>
-            <p class="text-muted small">Manage and track your digital movie tickets.</p>
+            <h2 class="fw-black m-0" style="letter-spacing: -1px;">ORDER HISTORY</h2>
+            <p class="text-white-50 small mb-0">Manage and track your digital movie tickets.</p>
         </div>
-        <i class="bi bi-ticket-detailed text-danger fs-1"></i>
+        <div class="text-end">
+            <i class="bi bi-ticket-perforated text-danger" style="font-size: 3rem; line-height: 1;"></i>
+        </div>
     </div>
 
-    <div class="glass-card">
-        <div class="table-responsive">
-            <table class="table custom-table">
-                <thead>
-                    <tr>
-                        <th>Order Ref</th>
-                        <th>Purchased Movies</th>
-                        <th>Total Price</th>
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <th>Customer Email</th>
-                        }
-                        <th class="text-center">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var order in Model)
-                    {
+    @if (Model != null && Model.Any())
+    {
+        <div class="glass-card">
+            <div class="table-responsive">
+                <table class="table custom-table">
+                    <thead>
                         <tr>
-                            <td class="font-monospace text-muted">
-                                #@order.Id.ToString().PadLeft(5, '0')
-                            </td>
-                            <td>
-                                @foreach (var item in order.OrderItems)
-                                {
-                                    <div class="movie-item">
-                                        <span class="text-danger fw-bold">@item.Amount x</span> @item.Movie.Name
-                                    </div>
-                                }
-                            </td>
-                            <td>
-                                <span class="price-tag">
-                                    @order.OrderItems.Sum(i => i.Price * i.Amount).ToString("c")
-                                </span>
-                            </td>
-                            @if (User.IsInRole("Admin"))
+                            <th>Order ID</th>
+                            <th>Purchased Content</th>
+                            <th>Total Amount</th>
+                            @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                             {
-                                <td>
-                                    <small class="text-white-50">@order.Email</small>
-                                </td>
+                                <th>Customer Details</th>
                             }
-                            <td class="text-center">
-                                <span class="status-badge">
-                                    <i class="bi bi-shield-check me-1"></i> Completed
-                                </span>
-                            </td>
+                            <th class="text-center">Status</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model)
+                        {
+                            <tr>
+                                <td class="font-monospace text-white-50">
+                                    #@order.Id.ToString().PadLeft(6, '0')
+                                </td>
+                                <td>
+                                    @foreach (var item in order.OrderItems)
+                                    {
+                                        <div class="movie-item">
+                                            <span class="text-danger fw-bold">@item.Amount</span>
+                                            <span class="mx-1">×</span>
+                                            @item.Movie.Name
+                                        </div>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="price-tag">
+                                        @order.OrderItems.Sum(i => i.Price * i.Amount).ToString("C")
+                                    </span>
+                                </td>
+                                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                                {
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            <span class="small">@order.Email</span>
+                                            <span class="text-muted" style="font-size: 0.7rem;">UID: @order.User.FullName...</span>
+                                        </div>
+                                    </td>
+                                }
+                                <td class="text-center">
+                                    <span class="status-badge">
+                                        <i class="bi bi-check-circle-fill me-2"></i> Verified
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+    }
+    else
+    {
+        <div class="glass-card empty-state">
+            <i class="bi bi-cart-x text-white-50 mb-3" style="font-size: 4rem;"></i>
+            <h4 class="fw-bold">No Orders Found</h4>
+            <p class="text-muted">You haven't purchased any tickets yet.</p>
+            <a asp-controller="Movies" asp-action="Index" class="btn btn-outline-danger rounded-pill px-4 mt-3">Browse Movies</a>
+        </div>
+    }
 </div>

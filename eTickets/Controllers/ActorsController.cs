@@ -1,6 +1,8 @@
 ﻿using eTickets.Data;
 using eTickets.Data.Services;
+using eTickets.Data.Static;
 using eTickets.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
@@ -8,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace eTickets.Controllers
 {
+
+    [Authorize(Roles = UserRole.Admin)]
     public class ActorsController : Controller
     {
         private readonly IActorServices _services;
@@ -16,6 +20,8 @@ namespace eTickets.Controllers
         {
             _services = services;
         }
+
+        [AllowAnonymous]
 
         public async Task<IActionResult> Index()
         {
@@ -59,6 +65,8 @@ namespace eTickets.Controllers
           await _services.DeleteAsync(id);
           return RedirectToAction("Index");
         }
+
+        [AllowAnonymous]
 
         public async Task<IActionResult> Details(int id)
         {

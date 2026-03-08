@@ -7,9 +7,31 @@
 <style>
     /* الأساسيات والخلفية */
     body {
-        background-color: #050505; /* أسود أعمق */
+        background-color: #050505;
         color: #ffffff;
         font-family: 'Segoe UI', Roboto, sans-serif;
+    }
+
+    /* أنيميشن النبض للحالة المتاحة */
+    @@keyframes pulse-red {
+        0% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        50% {
+            opacity: 0.5;
+            transform: scale(1.1);
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .animate-pulse {
+        animation: pulse-red 1.5s infinite;
     }
 
     .movie-wrapper {
@@ -22,7 +44,7 @@
         border-radius: 25px;
         overflow: hidden;
         background: #121212;
-        border: 1px solid rgba(255, 0, 0, 0.1); /* حدود حمراء خفيفة */
+        border: 1px solid rgba(255, 0, 0, 0.1);
         transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
@@ -37,13 +59,12 @@
         transform: scale(1.1);
     }
 
-    /* الطبقة الزجاجية السفلى */
     .glass-data-panel {
         position: absolute;
         bottom: 0;
         width: 100%;
         padding: 22px;
-        background: rgba(10, 0, 0, 0.85); /* لمحة حمراء في الخلفية */
+        background: rgba(10, 0, 0, 0.85);
         backdrop-filter: blur(15px);
         border-top: 1px solid rgba(255, 0, 0, 0.3);
         z-index: 3;
@@ -55,13 +76,12 @@
         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.3);
     }
 
-    /* أوسمة السعر والحالة باللون الأحمر */
     .neon-price {
         position: absolute;
         top: 20px;
         left: 20px;
         background: rgba(10, 0, 0, 0.85);
-        color: #ff3131; /* أحمر نيون */
+        color: #ff3131;
         padding: 6px 14px;
         border-radius: 12px;
         font-weight: 800;
@@ -78,31 +98,39 @@
     }
 
     .badge-status {
-        padding: 6px 12px;
-        border-radius: 10px;
-        font-size: 0.65rem;
+        padding: 7px 14px;
+        border-radius: 12px;
+        font-size: 0.7rem;
         font-weight: 800;
         text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
 
+    /* الحالة: متاح (أحمر) */
     .bg-available {
         background: #ff0000;
         color: white;
-        box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+        border: 1px solid #ff3131;
     }
 
+    /* الحالة: قريباً (أصفر) - التعديل الجديد */
     .bg-upcoming {
-        background: #444;
-        color: #ccc;
-        border: 1px solid #666;
+        background: #ffc107;
+        color: #000;
+        box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+        border: 1px solid #ffca2c;
     }
 
     .bg-ended {
         background: #1a1a1a;
-        color: #555;
+        color: #666;
+        border: 1px solid #333;
     }
 
-    /* الأزرار الاحترافية باللون الأحمر */
     .action-btn-hub {
         width: 40px;
         height: 40px;
@@ -111,7 +139,7 @@
         justify-content: center;
         border-radius: 12px;
         transition: all 0.3s ease;
-        text-decoration: none;
+        text-decoration: none !important;
         border: 1px solid rgba(255, 255, 255, 0.1);
         background: rgba(255, 255, 255, 0.05);
         color: white;
@@ -126,8 +154,7 @@
     .btn-edit:hover {
         border-color: #ffc107;
         color: #ffc107;
-        background: rgba(255,193,7,0.1);
-        box-shadow: 0 0 15px rgba(255,193,7,0.2);
+        background: rgba(255,193,7,0.15);
         transform: translateY(-3px);
     }
 
@@ -135,19 +162,23 @@
         border-color: #ff0000;
         color: #ff0000;
         background: rgba(255,0,0,0.15);
-        box-shadow: 0 0 15px rgba(255,0,0,0.4);
         transform: translateY(-3px);
     }
 
     .btn-cart:hover {
         border-color: #ff3131;
         color: #ff3131;
-        background: rgba(255,49,49,0.15);
-        box-shadow: 0 0 15px rgba(255,49,49,0.4);
+        background: rgba(255,49,49,0.2);
         transform: translateY(-3px);
     }
 
-    /* زر الإضافة العائم الأحمر */
+    .btn-cart.disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        pointer-events: none;
+        filter: grayscale(1);
+    }
+
     .fab-add {
         position: fixed;
         right: 30px;
@@ -162,14 +193,14 @@
         box-shadow: 0 10px 25px rgba(255, 0, 0, 0.4);
         transition: 0.4s;
         z-index: 1000;
-        border: none;
         color: white;
+        text-decoration: none;
     }
 
         .fab-add:hover {
             transform: rotate(90deg) scale(1.1);
-            background: #cc0000;
             color: white;
+            background: #cc0000;
         }
 </style>
 
@@ -180,61 +211,70 @@
             <div class="col-xl-3 col-lg-4 col-md-6 movie-wrapper">
                 <div class="premium-card-dark shadow-lg">
 
-                    @* السعر باللون الأحمر *@
                     <div class="neon-price">@item.Price.ToString("C")</div>
 
-                    @* الحالة *@
                     <div class="status-container">
-                        @if (DateTime.Now >= item.StartDate && DateTime.Now <= item.EndDate)
+                        @if (DateTime.Now.Date >= item.StartDate.Date && DateTime.Now.Date <= item.EndDate.Date)
                         {
-                            <span class="badge-status bg-available">LIVE NOW</span>
+                            <span class="badge-status bg-available">
+                                <i class="bi bi-record-fill animate-pulse"></i> Available
+                            </span>
                         }
-                        else if (DateTime.Now < item.StartDate)
+                        else if (DateTime.Now.Date < item.StartDate.Date)
                         {
-                            <span class="badge-status bg-upcoming">COMING</span>
+                            <span class="badge-status bg-upcoming">
+                                <i class="bi bi-clock-fill"></i> Upcoming
+                            </span>
                         }
                         else
                         {
-                            <span class="badge-status bg-ended">EXPIRED</span>
+                            <span class="badge-status bg-ended">
+                                <i class="bi bi-x-circle-fill"></i> Expired
+                            </span>
                         }
                     </div>
 
-                    @* البوستر *@
                     <img src="@item.ImageURL" class="poster-image" alt="@item.Name">
 
-                    @* لوحة البيانات *@
                     <div class="glass-data-panel">
                         <h5 class="fw-bold mb-1 text-white text-truncate">@item.Name</h5>
 
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span style="color: #ff3131; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;">@item.MovieCategory.ToString().ToUpper()</span>
-                            <span class="text-white-50 small" style="font-size: 0.7rem;">
-                                <i class="bi bi-clock-history me-1 text-danger"></i> @item.EndDate.ToString("dd MMM yy")
+
+                            <span class="small d-flex align-items-center" style="color: #ff9999; font-size: 0.7rem; font-weight: 600;">
+                                <i class="bi bi-calendar2-event-fill me-1" style="color: #ff3131; filter: drop-shadow(0 0 2px #ff3131);"></i>
+                                @item.EndDate.ToString("dd MMM yy")
                             </span>
                         </div>
 
-                        <p class="small text-light opacity-75 mb-3 text-truncate" style="font-size: 0.8rem;">
+                        <p class="small mb-3 text-truncate" style="font-size: 0.8rem; color: rgba(255,255,255,0.7);">
                             <i class="bi bi-geo-alt-fill text-danger me-1"></i> @(item.Cinema?.Name ?? "Main Hall")
                         </p>
 
-                        @* الأزرار *@
-                        <div class="d-flex justify-content-between">
+                        <div class="d-flex justify-content-between align-items-center">
                             <div class="d-flex gap-2">
-                                <a class="action-btn-hub btn-details" asp-action="Details" asp-route-id="@item.Id">
+                                <a class="action-btn-hub btn-details" asp-action="Details" asp-route-id="@item.Id" title="View Details">
                                     <i class="bi bi-eye-fill"></i>
                                 </a>
-                                <a class="action-btn-hub btn-edit" asp-action="Edit" asp-route-id="@item.Id">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
-                                <a class="action-btn-hub btn-delete" asp-action="Delete" asp-route-id="@item.Id">
-                                    <i class="bi bi-trash3-fill"></i>
+
+                                <a class="action-btn-hub btn-cart @(DateTime.Now.Date > item.EndDate.Date ? "disabled" : "")"
+                                   asp-controller="Orders" asp-action="AddItemToShoppingCart" asp-route-id="@item.Id" title="Add to Cart">
+                                    <i class="bi bi-cart-plus-fill"></i>
                                 </a>
                             </div>
 
-                            <a class="action-btn-hub btn-cart @(DateTime.Now > item.EndDate ? "disabled" : "")"
-                               asp-controller="Orders" asp-action="AddItemToShoppingCart" asp-route-id="@item.Id">
-                                <i class="bi bi-cart-check-fill"></i>
-                            </a>
+                            @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                            {
+                                <div class="d-flex gap-2">
+                                    <a class="action-btn-hub btn-edit" asp-action="Edit" asp-route-id="@item.Id" title="Edit Movie">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a class="action-btn-hub btn-delete" asp-action="Delete" asp-route-id="@item.Id" title="Delete Movie">
+                                        <i class="bi bi-trash3-fill"></i>
+                                    </a>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -243,7 +283,9 @@
     </div>
 </div>
 
-@* زر الإضافة العائم *@
-<a asp-controller="Movies" asp-action="Create" class="fab-add">
-    <i class="bi bi-plus-lg fs-2"></i>
-</a>
+@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+    <a asp-controller="Movies" asp-action="Create" class="fab-add">
+        <i class="bi bi-plus-lg fs-2"></i>
+    </a>
+}

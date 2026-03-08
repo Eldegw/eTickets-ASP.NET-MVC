@@ -1,5 +1,6 @@
 ﻿using eTickets.Data.Cart;
 using eTickets.Data.Services;
+using eTickets.Data.Static;
 using eTickets.Data.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace eTickets.Controllers
 {
+
+    [Authorize(Roles = UserRole.Admin)]
+
     public class OrdersController : Controller
     {
         private readonly IMovieService _movieService;
@@ -34,7 +38,8 @@ namespace eTickets.Controllers
             return View(response);
         }
 
-    
+
+     
         public async Task<IActionResult> AddItemToShoppingCart(int id)
         {
             var item = await _movieService.GetMovieByIdAsync(id);
@@ -64,7 +69,7 @@ namespace eTickets.Controllers
         {
             var items = _shoppingCart.GetShoppingCartItems();
 
-            // جلب بيانات المستخدم الحالي المسجل دخوله
+         
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
             string userEmailAddress = User.FindFirstValue(ClaimTypes.Email) ?? "";
 
@@ -78,9 +83,10 @@ namespace eTickets.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            string userid = "";
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)?? "";
+            string userRole = User.FindFirstValue(ClaimTypes.Role) ?? "" ;
 
-            var orders = await _orderService.GetOrderByUserIdAsync(userid);
+            var orders = await _orderService.GetOrderByUserIdAndRoleAsync(userId , userRole);
             return View("Index",orders);
         }
 
